@@ -1,0 +1,6 @@
+{
+  "name": "@any/test",
+  "jib": {
+    "commandDir": "commands"
+  }
+}

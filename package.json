@@ -1,0 +1,59 @@
+{
+  "name": "@jib/codegen",
+  "version": "0.0.1",
+  "description": "Include yeoman generators with @jib/cli projects",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "npm run build -- -w",
+    "docs": "rm -rf ./docs && typedoc --options ./typedoc.js --exclude '**/*+(spec|templates|node_modules)/**' --out ./docs ./src",
+    "lint": "tslint -p .",
+    "test": "nyc jasmine --config=src/spec/support/jasmine.json",
+    "posttest": "nyc check-coverage --lines 90 --functions 90 --branches 90",
+    "test:report": "nyc report --reporter=json && codecov -f reports/coverage/*.json",
+    "prebuild": "rm -rf build",
+    "prepack": "npm run build"
+  },
+  "author": "Matt Vander Vliet",
+  "homepage": "https://github.com/jibcli/codegen",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jibcli/codegen"
+  },
+  "keywords": [
+    "cli",
+    "typescript",
+    "command",
+    "generator",
+    "yeoman"
+  ],
+  "license": "MIT",
+  "files": [
+    "build",
+    "!build/spec"
+  ],
+  "dependencies": {
+    "yeoman-environment": "^2.3.3",
+    "yeoman-generator": "^3.1.1"
+  },
+  "devDependencies": {
+    "@jib/cli": "^0.0.7",
+    "@jib/tslint": "0.0.1",
+    "@types/jasmine": "^2.8.8",
+    "@types/node": "^10.10.1",
+    "@types/yeoman-generator": "^2.0.3",
+    "codecov": "^3.1.0",
+    "jasmine": "^3.2.0",
+    "jasmine-spec-reporter": "^4.2.1",
+    "nyc": "^12.0.2",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "typedoc": "^0.12.0",
+    "typescript": "^3.0.1",
+    "yeoman-test": "^1.9.1"
+  },
+  "peerDependencies": {
+    "@jib/cli": "^0.0.7"
+  }
+}

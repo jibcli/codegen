@@ -7,19 +7,15 @@ describe('Generator Command', () => {
   const run = (...args: any[]): Promise<void> => program.parse(['node', 'cli'].concat(args));
   const impl: string = path.join(__dirname, 'support', 'impl');
   beforeAll(() => {
-    try {
-      program = new CLI({
-        baseDir: impl,
-        rootCommand: 'init',
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    program = new CLI({
+      baseDir: impl,
+      rootCommand: 'init',
+    });
   });
 
   it('should run a generator', done => {
     run().then(() => {
-      console.log('RAN A GENERATOR');
+      // ...
     }).then(done).catch(done.fail);
   });
 });

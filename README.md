@@ -3,6 +3,13 @@
 Adds flexible, simplified support for [`yeoman`](http://yeoman.io) (source code)
 generators within a [`@jib/cli`](https://github.com/jibcli/cli) project.
 
+
+[![npm version](https://badge.fury.io/js/%40jib%codegen.svg)](https://badge.fury.io/js/%40jib%codegen)
+[![wercker status](https://app.wercker.com/status/2e560723c44622e5b42623fc55c613f9/s/master "wercker status")](https://app.wercker.com/project/byKey/2e560723c44622e5b42623fc55c613f9)
+[![codecov](https://codecov.io/gh/jibcli/codegen/branch/master/graph/badge.svg)](https://codecov.io/gh/jibcli/codegen)
+[![GitHub license](https://img.shields.io/github/license/jibcli/codegen.svg)](https://github.com/jibcli/codegen/blob/master/LICENSE)
+[![install size](https://packagephobia.now.sh/badge?p=@jib/codegen)](https://packagephobia.now.sh/result?p=@jib/codegen)
+
 Technically this package could be used as a standalone plugin to other CLI
 frameworks, however it is designed to work in accordance with the `@jib/cli`
 opinions and applicaton structure.

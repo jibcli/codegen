@@ -115,7 +115,7 @@ export abstract class BaseGenerator<
    * @param name Argument name
    * @param config Argument configuration
    *
-   * ```typescript
+   * ```ts
    * this.argument('prefix', {
    *   type: String,
    *   description: 'A prefix for the generated code',
@@ -139,7 +139,7 @@ export abstract class BaseGenerator<
    * @param name Option name
    * @param config Option configuration
    *
-   * ```typescript
+   * ```ts
    * this.option('language', {
    *   alias: 'l',
    *   type: String,

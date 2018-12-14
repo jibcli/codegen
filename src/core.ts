@@ -108,6 +108,15 @@ export abstract class BaseGenerator<
   // ###################################
 
   /**
+   * log messages in yeoman runloop
+   * @param message message to log
+   * @param context context for message
+   */
+  public log(message: any, context?: any): void {
+    return super.log(message, context);
+  }
+
+  /**
    * Specify arguments for the generator. Generally preferred in the constructor.
    * Arguments are assigned by name to the `this.options` hash.
    * See [documentation](http://yeoman.io/generator/Generator.html#argument) for

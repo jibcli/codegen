@@ -51,7 +51,7 @@ export interface IGeneratorEnvOptions {
  * Generator environment adapter to be used for generator loading, usage, and
  * invocation.
  */
-@Provide({
+@Provide<GeneratorEnv>({
   factory: (from?: string) => GeneratorEnv.relativeTo(from || Workspace.commandsRoot()),
 })
 export class GeneratorEnv {
@@ -174,7 +174,8 @@ export class GeneratorEnv {
    * @param args additional arguments to run inside the generator
    * @todo generator args can include both options and arguments to be parsed by the generator.
    */
-  public async run(generator: string, options: IBaseGeneratorOptions = {}, ...args: any[]): Promise<void> {
+  // tslint:disable-next-line:max-line-length
+  public async run<T extends IBaseGeneratorOptions = any>(generator: string, options: T = <T>{}, ...args: any[]): Promise<void> {
     return await new Promise<void>((resolve, reject) => {
       try {
         this._ensureEnv('run')

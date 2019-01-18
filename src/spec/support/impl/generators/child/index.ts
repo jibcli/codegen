@@ -12,6 +12,13 @@ class ChildGen extends BaseGenerator {
     });
 
   }
+
+  public dothings(): Promise<any> {
+    this.log('Hi');
+    return this.prompt({
+      name: 'name',
+    });
+  }
 }
 
 export = ChildGen;

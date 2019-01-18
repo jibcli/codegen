@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Provide, Workspace } from '@jib/cli';
+import * as Yeoman from 'yeoman-generator';
 const yo = require('yeoman-environment');
 
 import { EOL } from 'os';
@@ -37,6 +38,16 @@ interface IYeomanEnv {
 }
 
 /**
+ * Yeoman terminal adapter interface
+ * @see http://yeoman.github.io/environment/TerminalAdapter.html
+ */
+export interface IYeomanAdapter {
+  log?(...msg: any[]): void;
+  prompt?(q: Yeoman.Questions, cb?: (...args: any[]) => void): Promise<any> | void;
+  prompt?<T extends Yeoman.Answers = any>(q: Yeoman.Questions, cb?: (...args: any[]) => void): Promise<T> | void;
+}
+
+/**
  * static name for generator namespace delimiter
  */
 const NAMESPACE_DELIM = ':';
@@ -70,6 +81,15 @@ export class GeneratorEnv {
     });
   }
 
+  /**
+   * Provide own yeoman adapter for logging/prompting
+   * @param adapter
+   */
+  public static adapter(adapter: IYeomanAdapter): void {
+    this._adapter = adapter;
+  }
+
+  private static _adapter: IYeomanAdapter;
   /** reference to the created yeoman environment */
   private _yo: IYeomanEnv;
 
@@ -120,12 +140,11 @@ export class GeneratorEnv {
    * @see http://yeoman.io/environment/Environment.html
    */
   public load(generators?: string | string[]): this {
+    const env: IYeomanEnv = this._env();
     const { generatorRoot } = this.options;
-    const env: IYeomanEnv = this._yo || yo.createEnv();
     this.list(generators).forEach(gen => {
       env.register(path.join(generatorRoot, gen), this._namespaced(gen));
     });
-    this._yo = env;
     return this;
   }
 
@@ -210,6 +229,16 @@ export class GeneratorEnv {
           .split(/\s{2,}/) // tabs
           .map(col => col.replace(/^\#\s/, '')); // remove leading #
       });
+  }
+
+  /**
+   * gets yeoman env
+   */
+  private _env(): IYeomanEnv {
+    const { _adapter } = this.constructor as typeof GeneratorEnv;
+    const env: IYeomanEnv = this._yo || yo.createEnv([], {}, _adapter);
+    this._yo = env;
+    return env;
   }
 
   /**

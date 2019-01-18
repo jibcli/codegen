@@ -1,7 +1,8 @@
 import * as path from 'path';
 import { GeneratorEnv, GENERATOR_DIR_NAME } from '../';
 import MainGenerator = require('./support/impl/generators/main');
-import { IGeneratorUsage } from '../env';
+import { IGeneratorUsage, IYeomanAdapter } from '../env';
+import { Answers, Questions } from 'yeoman-generator';
 
 describe('GeneratorEnv', () => {
 
@@ -106,7 +107,24 @@ describe('GeneratorEnv', () => {
           expect(main).toHaveBeenCalled();
           expect(ended).toBe(true);
         }).then(done).catch(done.fail);
+    });
 
+    it('should support custom adapters', done => {
+      const adapter: IYeomanAdapter = {
+        log: (msg: any) => { },
+        prompt: (q: Questions) => Promise.resolve<Answers>({}),
+      };
+      const log = spyOn(adapter, 'log').and.callThrough();
+      const prompt = spyOn(adapter, 'prompt').and.callThrough();
+
+      GeneratorEnv.adapter(adapter);
+      env.reset()
+        .load('child')
+        .run('child')
+        .then(() => {
+          expect(log).toHaveBeenCalledWith(jasmine.stringMatching(/hi/i));
+          expect(prompt).toHaveBeenCalledWith(jasmine.any(Object));
+        }).then(done).catch(done.fail);
     });
   });
 

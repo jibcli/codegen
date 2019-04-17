@@ -1,6 +1,6 @@
 {
   "name": "@jib/codegen",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Include yeoman generators with @jib/cli projects",
   "main": "build/index.js",
   "types": "build/index.d.ts",

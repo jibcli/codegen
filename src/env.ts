@@ -165,7 +165,7 @@ export class GeneratorEnv {
     // collect help from the yo <generator> --help
     interface IUsageRef {
       name: string;
-      ctor: { new(...args: any[]): BaseGenerator };
+      ctor: new(...args: any[]) => BaseGenerator;
       instance?: BaseGenerator;
     }
 

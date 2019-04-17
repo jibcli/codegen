@@ -64,9 +64,7 @@ export type SubGeneratorOptions = IBaseGeneratorOptions & {
   parent?: BaseGenerator;
 };
 
-export interface IGeneratorCtor {
-  new (...args: any[]): BaseGenerator;
-}
+export type IGeneratorCtor = new (...args: any[]) => BaseGenerator;
 
 /**
  * Abstract generator from which others are based

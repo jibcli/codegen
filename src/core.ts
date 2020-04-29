@@ -179,7 +179,7 @@ export abstract class BaseGenerator<
    * Prompt for user input based on [inquirer](https://www.npmjs.com/package/inquirer)
    * @param prompts prompt question configurations
    */
-  public prompt(prompts: Yeoman.Questions): Promise<Yeoman.Answers> {
+  public prompt<A extends Yeoman.Answers = Yeoman.Answers>(prompts: Yeoman.Questions<A>): Promise<A> {
     return super.prompt(prompts);
   }
 

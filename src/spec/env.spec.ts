@@ -110,8 +110,8 @@ describe('GeneratorEnv', () => {
     });
 
     it('should support custom adapters', done => {
-      const adapter: IYeomanAdapter = {
-        log: (msg: any) => { },
+      const adapter: any = {
+        log: (msg: any) => {},
         prompt: (q: Questions) => Promise.resolve<Answers>({}),
       };
       const log = spyOn(adapter, 'log').and.callThrough();

@@ -1,13 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Provide, Workspace } from '@jib/cli';
-import * as Yeoman from 'yeoman-generator';
-const yo = require('yeoman-environment');
+import * as YeomanEnv from 'yeoman-environment';
 
 import { EOL } from 'os';
 import { resolveDir } from './workspace';
 
-import { BaseGenerator, IGeneratorCtor, IBaseGeneratorOptions, GENERATOR_DIR_NAME } from './core';
+import { BaseGenerator, IBaseGeneratorOptions, GENERATOR_DIR_NAME } from './core';
 
 /**
  * Structure for a usage output for use in grid presentation
@@ -25,26 +24,10 @@ export interface IGeneratorUsage {
 }
 
 /**
- * Basic interface for the yeoman env
- * @internal
- */
-interface IYeomanEnv {
-  namespaces(): string[];
-  run(command: string | string[], cb?: (err?: Error) => void): void;
-  run(command: string | string[], options?: any, cb?: (err?: Error) => void): void;
-  get(namespace: string): IGeneratorCtor;
-  register(path: string, name?: string): void;
-  instantiate(ctor: IGeneratorCtor, opts?: any): BaseGenerator;
-}
-
-/**
  * Yeoman terminal adapter interface
  * @see http://yeoman.github.io/environment/TerminalAdapter.html
  */
-export interface IYeomanAdapter {
-  log?(...msg: any[]): void;
-  prompt?(q: Yeoman.Questions, cb?: (...args: any[]) => void): Promise<any> | void;
-  prompt?<T extends Yeoman.Answers = any>(q: Yeoman.Questions, cb?: (...args: any[]) => void): Promise<T> | void;
+export interface IYeomanAdapter extends YeomanEnv.Adapter {
 }
 
 /**
@@ -85,13 +68,13 @@ export class GeneratorEnv {
    * Provide own yeoman adapter for logging/prompting
    * @param adapter
    */
-  public static adapter(adapter: IYeomanAdapter): void {
+  public static adapter(adapter: YeomanEnv.Adapter): void {
     this._adapter = adapter;
   }
 
-  private static _adapter: IYeomanAdapter;
+  private static _adapter: YeomanEnv.Adapter;
   /** reference to the created yeoman environment */
-  private _yo: IYeomanEnv;
+  private _yo: YeomanEnv;
 
   constructor(private options: IGeneratorEnvOptions = {} as any) {
     const { generatorRoot } = options;
@@ -140,7 +123,7 @@ export class GeneratorEnv {
    * @see http://yeoman.io/environment/Environment.html
    */
   public load(generators?: string | string[]): this {
-    const env: IYeomanEnv = this._env();
+    const env: YeomanEnv = this._env();
     const { generatorRoot } = this.options;
     this.list(generators).forEach(gen => {
       env.register(path.join(generatorRoot, gen), this._namespaced(gen));
@@ -165,17 +148,20 @@ export class GeneratorEnv {
     // collect help from the yo <generator> --help
     interface IUsageRef {
       name: string;
-      ctor: new(...args: any[]) => BaseGenerator;
+      ctor: typeof BaseGenerator;
       instance?: BaseGenerator;
     }
 
     this.load(generators);
-    const env: IYeomanEnv = this._yo;
+    const env: YeomanEnv = this._yo;
     const usage: IGeneratorUsage[] = (env.namespaces() as string[])
-      .map((ns: string) => ({ name: ns, ctor: env.get(ns) } as IUsageRef))
+      .map((ns: string) => ({ name: ns, ctor: env.get(ns) as any } as IUsageRef))
       .map((ref: IUsageRef) => ({ // instantiate the generator with --help
         ...ref,
-        instance: env.instantiate(ref.ctor, { options: { help: true } }),
+        instance: env.instantiate(ref.ctor as any, {
+          arguments: null,
+          options: { help: true },
+        }) as BaseGenerator,
       }))
       .map((ref: IUsageRef) => ({
         name: ref.name.split(NAMESPACE_DELIM).pop(),
@@ -194,10 +180,10 @@ export class GeneratorEnv {
    * @todo generator args can include both options and arguments to be parsed by the generator.
    */
   // tslint:disable-next-line:max-line-length
-  public async run<T extends IBaseGeneratorOptions = any>(generator: string, options: T = <T>{}, ...args: any[]): Promise<void> {
-    return await new Promise<void>((resolve, reject) => {
+  public run<T extends IBaseGeneratorOptions = any>(generator: string, options: T = <T>{}, ...args: any[]): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
       try {
-        this._ensureEnv('run')
+        await this._ensureEnv('run')
           ._yo.run([this._namespaced(generator)].concat(args), options, err => {
             return err ? reject(err) : resolve();
           });
@@ -234,9 +220,9 @@ export class GeneratorEnv {
   /**
    * gets yeoman env
    */
-  private _env(): IYeomanEnv {
+  private _env(): YeomanEnv {
     const { _adapter } = this.constructor as typeof GeneratorEnv;
-    const env: IYeomanEnv = this._yo || yo.createEnv([], {}, _adapter);
+    const env: YeomanEnv = this._yo || YeomanEnv.createEnv([], {}, _adapter);
     this._yo = env;
     return env;
   }

@@ -1,12 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Provide, Workspace } from '@jib/cli';
+import * as Yeoman from 'yeoman-generator';
 import * as YeomanEnv from 'yeoman-environment';
 
 import { EOL } from 'os';
 import { resolveDir } from './workspace';
 
-import { BaseGenerator, IBaseGeneratorOptions, GENERATOR_DIR_NAME } from './core';
+import { BaseGenerator, IBaseGeneratorOptions, GENERATOR_DIR_NAME, IGeneratorCtor } from './core';
 
 /**
  * Structure for a usage output for use in grid presentation
@@ -23,11 +24,16 @@ export interface IGeneratorUsage {
   arguments: IUsageTable;
 }
 
+interface IYeomanEnv extends YeomanEnv {
+  get(namespace: string): any;
+}
+
 /**
  * Yeoman terminal adapter interface
  * @see http://yeoman.github.io/environment/TerminalAdapter.html
  */
 export interface IYeomanAdapter extends YeomanEnv.Adapter {
+
 }
 
 /**
@@ -74,7 +80,7 @@ export class GeneratorEnv {
 
   private static _adapter: YeomanEnv.Adapter;
   /** reference to the created yeoman environment */
-  private _yo: YeomanEnv;
+  private _yo: IYeomanEnv;
 
   constructor(private options: IGeneratorEnvOptions = {} as any) {
     const { generatorRoot } = options;
@@ -123,7 +129,7 @@ export class GeneratorEnv {
    * @see http://yeoman.io/environment/Environment.html
    */
   public load(generators?: string | string[]): this {
-    const env: YeomanEnv = this._env();
+    const env: IYeomanEnv = this._env();
     const { generatorRoot } = this.options;
     this.list(generators).forEach(gen => {
       env.register(path.join(generatorRoot, gen), this._namespaced(gen));
@@ -148,12 +154,12 @@ export class GeneratorEnv {
     // collect help from the yo <generator> --help
     interface IUsageRef {
       name: string;
-      ctor: typeof BaseGenerator;
+      ctor: IGeneratorCtor;
       instance?: BaseGenerator;
     }
 
     this.load(generators);
-    const env: YeomanEnv = this._yo;
+    const env: IYeomanEnv = this._yo;
     const usage: IGeneratorUsage[] = (env.namespaces() as string[])
       .map((ns: string) => ({ name: ns, ctor: env.get(ns) as any } as IUsageRef))
       .map((ref: IUsageRef) => ({ // instantiate the generator with --help
@@ -220,9 +226,9 @@ export class GeneratorEnv {
   /**
    * gets yeoman env
    */
-  private _env(): YeomanEnv {
+  private _env(): IYeomanEnv {
     const { _adapter } = this.constructor as typeof GeneratorEnv;
-    const env: YeomanEnv = this._yo || YeomanEnv.createEnv([], {}, _adapter);
+    const env: IYeomanEnv = this._yo || YeomanEnv.createEnv([], {}, _adapter);
     this._yo = env;
     return env;
   }

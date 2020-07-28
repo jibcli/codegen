@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as child_process from 'child_process';
 import * as Yeoman from 'yeoman-generator';
 import { resolveDir } from './workspace';
 
@@ -33,8 +32,6 @@ export interface IGeneratorOption extends Yeoman.OptionConfig {
   alias?: string;
   /** Description for the option */
   description?: string;
-  /** The option type */
-  type?: typeof Boolean | typeof String | typeof Number;
   /** Default value */
   default?: boolean | string | number;
   /** Boolean whether to omit from help & usage */
@@ -74,8 +71,6 @@ export abstract class BaseGenerator<
   T extends IBaseGeneratorOptions = any,
   K extends IBaseGeneratorArgs = any> extends Yeoman {
   // yeoman ivars
-  public config: Yeoman.Storage;
-  public fs: Yeoman.MemFsEditor;
   public options: T;
   public arguments: K;
 
@@ -104,15 +99,6 @@ export abstract class BaseGenerator<
   // ###################################
   // ###     Base Yeoman methods     ###
   // ###################################
-
-  /**
-   * log messages in yeoman runloop
-   * @param message message to log
-   * @param context context for message
-   */
-  public log(message: any, context?: any): void {
-    return super.log(message, context);
-  }
 
   /**
    * Specify arguments for the generator. Generally preferred in the constructor.
@@ -163,6 +149,12 @@ export abstract class BaseGenerator<
   }
 
   /**
+   * plain overload - not for reference
+   * @param generator
+   * @param options
+   */
+  public composeWith(generator: any, options?: SubGeneratorOptions): any;
+  /**
    * Add a subgenerator run loop. Methods will be executed in parallel following
    * the standard yeoman run loop. Note that options.parent will be automatically
    * assigned as the generator from which the method is called. Options are also
@@ -170,9 +162,11 @@ export abstract class BaseGenerator<
    * @param name subgenerator name registered in the GeneratorEnv
    * @param options options passed to the subgenerator instance
    */
-  public composeWith(name: string, options: SubGeneratorOptions = {}): this {
+  public composeWith(
+    name: string,
+    options: SubGeneratorOptions = {}): this {
     options.parent = this;
-    return super.composeWith(name, {...this.options as any, ...options});
+    return super.composeWith(name, {...this.options as any, ...options}, false);
   }
 
   /**

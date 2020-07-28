@@ -27,11 +27,13 @@ export interface IGeneratorArgument extends Yeoman.ArgumentConfig {
 /**
  * Generator option interface
  */
-export interface IGeneratorOption extends Yeoman.OptionConfig {
+export interface IGeneratorOption extends Omit<Yeoman.OptionConfig, 'type'> {
   /** Option name alias (example `h` is an alias for `help`) */
   alias?: string;
   /** Description for the option */
   description?: string;
+  /** the option type */
+  type?: typeof Boolean | typeof String | typeof Number;
   /** Default value */
   default?: boolean | string | number;
   /** Boolean whether to omit from help & usage */
@@ -145,7 +147,7 @@ export abstract class BaseGenerator<
    * ```
    */
   public option(name: string, config: IGeneratorOption): this {
-    return super.option(name, config);
+    return super.option(name, config as Yeoman.OptionConfig);
   }
 
   /**

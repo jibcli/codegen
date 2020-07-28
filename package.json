@@ -34,24 +34,24 @@
     "!build/spec"
   ],
   "dependencies": {
-    "@types/yeoman-environment": "^2.3.3",
+    "@types/yeoman-environment": "^2.10.0",
     "@types/yeoman-generator": "^3.1.4",
-    "yeoman-environment": "^2.9.6",
+    "yeoman-environment": "^2.10.3",
     "yeoman-generator": "^3.2.0"
   },
   "devDependencies": {
-    "@jib/cli": "^0.1.6",
-    "@jib/tslint": "0.0.1",
-    "@types/jasmine": "^2.8.16",
-    "@types/node": "^10.17.21",
-    "codecov": "^3.6.5",
-    "jasmine": "^3.5.0",
+    "@jib/cli": "^0.1.7",
+    "@jib/tslint": "^0.0.2",
+    "@types/jasmine": "^2.8.17",
+    "@types/node": "^10.17.28",
+    "codecov": "^3.7.2",
+    "jasmine": "^3.6.1",
     "jasmine-spec-reporter": "^4.2.1",
-    "nyc": "^15.0.1",
+    "nyc": "^15.1.0",
     "ts-node": "^7.0.1",
     "tslint": "^5.20.1",
-    "typedoc": "^0.17.6",
-    "typescript": "^3.8.3",
+    "typedoc": "^0.17.8",
+    "typescript": "^3.9.7",
     "yeoman-test": "^1.9.1"
   },
   "peerDependencies": {

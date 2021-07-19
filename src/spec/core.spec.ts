@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as Yeoman from 'yeoman-generator';
 import { BaseGenerator } from '../core';
-const Tester: any = require('yeoman-test');
+// const Tester: any = require('yeoman-test');
+import * as Tester from 'yeoman-test';
 
 export const assertGeneratedFiles = (outputDir: string, files: string[], not?: boolean): void => {
   // console.log(outputDir, fs.readdirSync(outputDir));
@@ -39,7 +40,7 @@ describe('BaseGenerator', () => {
       const write = spyOn(StubGen.prototype, 'writing');
       const other = spyOn(StubGen.prototype as any, '_other');
       Tester.run(StubGen)
-        .then((generated: string) => {
+        .then((generated: Tester.RunResult) => {
           expect(init).toHaveBeenCalledBefore(conf);
           expect(conf).toHaveBeenCalledBefore(write);
           expect(other).not.toHaveBeenCalled(); // avoid _ prefix methods
@@ -63,7 +64,7 @@ describe('BaseGenerator', () => {
         .on('ready', (generator: StubGen) => instance = generator)
         .withOptions({bar: 'baz'})
         .withArguments('argue')
-        .then((generated: string) => {
+        .then((generated: Tester.RunResult) => {
           // check option that uses default
           expect(instance.options.foo).toBe(false, 'default option value was not used');
           expect(instance.options.bar).toEqual('baz', 'provided option was not assigned');
@@ -123,13 +124,16 @@ describe('BaseGenerator', () => {
       });
       Tester.run(StubGen)
         .on('ready', (generator: StubGen) => instance = generator)
-        .then((generated: string) => {
-          assertGeneratedFiles(generated, [
+        .then((generated: Tester.RunResult) => {
+          // console.log(generated);
+          // generated.a
+          // generated.ass
+          assertGeneratedFiles(generated.cwd, [
             'package.json',
             'test.md',
             'src/foo.txt',
           ]);
-          const md = fs.readFileSync(path.join(generated, 'test.md'));
+          const md = fs.readFileSync(path.join(generated.cwd, 'test.md'));
           expect(`${md}`).toContain(interpol.project);
           expect(`${md}`).toContain(interpol.description);
         })

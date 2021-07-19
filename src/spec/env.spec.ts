@@ -123,7 +123,7 @@ describe('GeneratorEnv', () => {
         .run('child')
         .then(() => {
           expect(log).toHaveBeenCalledWith(jasmine.stringMatching(/hi/i));
-          expect(prompt).toHaveBeenCalledWith(jasmine.any(Object));
+          expect(prompt).toHaveBeenCalled();
         }).then(done).catch(done.fail);
     });
   });

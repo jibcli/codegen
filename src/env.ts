@@ -187,12 +187,10 @@ export class GeneratorEnv {
    */
   // tslint:disable-next-line:max-line-length
   public run<T extends IBaseGeneratorOptions = any>(generator: string, options: T = <T>{}, ...args: any[]): Promise<void> {
-    return new Promise<void>(async (resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       try {
-        await this._ensureEnv('run')
-          ._yo.run([this._namespaced(generator)].concat(args), options, err => {
-            return err ? reject(err) : resolve();
-          });
+        resolve(this._ensureEnv('run')
+          ._yo.run([this._namespaced(generator)].concat(args), options as any));
       } catch (e) {
         reject(e);
       }
